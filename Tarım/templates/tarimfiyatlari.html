@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            background: url('https://mehmetsoylemez.com.tr/wp-content/uploads/2013/06/gokyuzu-1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Lora', serif;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: rgba(76, 175, 80, 0.9);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .content {
+            margin-left: 0;
+            padding: 20px;
+        }
+
+        .sidebar {
+            display: none;
+        }
+
+        footer {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ffcc00;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding-top: 10px;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    {% include 'menu.html' %}
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1 class="text-center mb-4"></h1>
+
+        <!-- Grafik Alanı -->
+        <div class="mt-5">
+            {% if is_sample_data %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                Şu anda ABD tarım borsası verilerine erişilemediği için örnek veriler gösteriliyor.
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                Son güncelleme: {{ products.0.date }}
+            </div>
+            {% endif %}
+
+            <!-- TÜRİB benzeri kategori kartları -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Tahıllar</h5>
+                            <p class="card-text">Buğday, Mısır, Soya, Pirinç, Yulaf</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Yumuşak Emtialar</h5>
+                            <p class="card-text">Kakao, Kahve, Pamuk, Şeker</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-dark">
+                        <div class="card-body">
+                            <h5 class="card-title">Hayvansal Ürünler</h5>
+                            <p class="card-text">Canlı Sığır, Lean Hog</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Diğer Ürünler</h5>
+                            <p class="card-text">Kereste, Portakal Suyu,Hisseler</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fiyat Tablosu -->
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">Piyasa Verileri</h5>
+                        </div>
+                        <div class="col-auto">
+                            <span class="badge bg-success">Canlı Veri</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Ürün Kodu</th>
+                                    <th>Ürün Adı</th>
+                                    <th>Son Fiyat (TL)</th>
+                                    <th>Son Fiyat ($)</th>
+                                    <th>Günlük Değişim</th>
+                                    <th>En Yüksek</th>
+                                    <th>En Düşük</th>
+                                    <th>Hacim</th>
+                                    <th>Son İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for product in products %}
+                                <tr>
+                                    <td><span class="badge bg-secondary">{{ product.symbol }}</span></td>
+                                    <td>
+                                        <strong>{{ product.name }}</strong>
+                                        {% if 'Buğday' in product.name or 'Mısır' in product.name or 'Soya' in product.name or 'Pirinç' in product.name or 'Yulaf' in product.name or 'Kolza' in product.name %}
+                                        <span class="badge bg-primary">Tahıl</span>
+                                        {% elif 'Kakao' in product.name or 'Kahve' in product.name or 'Pamuk' in product.name or 'Şeker' in product.name %}
+                                        <span class="badge bg-success">Yumuşak</span>
+                                        {% elif 'Sığır' in product.name or 'Hog' in product.name or 'Süt' in product.name %}
+                                        <span class="badge bg-warning">Hayvansal</span>
+                                        {% elif 'Gübre' in product.name or 'Üre' in product.name %}
+                                        <span class="badge bg-info">Gübre</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Diğer</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="fw-bold">{{ product.price|floatformat:2 }} ₺</td>
+                                    <td>${{ product.price_usd|floatformat:2 }}</td>
+                                    <td>
+                                        {% if product.change_percent > 0 %}
+                                        <span class="text-success">
+                                            <i class="fas fa-caret-up"></i>
+                                            +{{ product.change_percent|floatformat:2 }}%
+                                        </span>
+                                        {% elif product.change_percent < 0 %}
+                                        <span class="text-danger">
+                                            <i class="fas fa-caret-down"></i>
+                                            {{ product.change_percent|floatformat:2 }}%
+                                        </span>
+                                        {% else %}
+                                        <span class="text-muted">
+                                            <i class="fas fa-minus"></i>
+                                            {{ product.change_percent|floatformat:2 }}%
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {{ product.high|floatformat:2 }} ₺
+                                        <small class="text-muted">${{ product.high_usd|floatformat:2 }}</small>
+                                    </td>
+                                    <td>
+                                        {{ product.low|floatformat:2 }} ₺
+                                        <small class="text-muted">${{ product.low_usd|floatformat:2 }}</small>
+                                    </td>
+                                    <td>
+                                        {% if product.volume > 0 %}
+                                        {{ product.volume|stringformat:",d" }}
+                                        {% else %}
+                                        <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ product.date }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">Veri bulunamadı</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grafik -->
+            <div class="row mt-4">
+                <!-- Fiyat Grafiği -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">Fiyat Grafiği (TL)</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="tarimFiyatlariChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Değişim ve Hacim Grafiği -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">Günlük Değişim ve İşlem Hacmi</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="degisimHacimChart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <span>Yazılım Kooparatifi &copy; 2024</span>
+        <div class="social-icons">
+            <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="mailto:example@gmail.com"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const productNames = [
+            {% for product in products %}
+                "{{ product.name }}",
+            {% endfor %}
+        ];
+        const productPrices = [
+            {% for product in products %}
+                {{ product.price }},
+            {% endfor %}
+        ];
+        const changePercents = [
+            {% for product in products %}
+                {{ product.change_percent }},
+            {% endfor %}
+        ];
+        const volumes = [
+            {% for product in products %}
+                {{ product.volume }},
+            {% endfor %}
+        ];
+
+        // Fiyat Grafiği
+        const ctx = document.getElementById('tarimFiyatlariChart').getContext('2d');
+        const tarimFiyatlariChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: productNames,
+                datasets: [{
+                    label: 'Fiyat (TL)',
+                    data: productPrices,
+                    backgroundColor: changePercents.map(percent =>
+                        percent > 0 ? 'rgba(46, 204, 113, 0.7)' : // Yeşil (artış)
+                        percent < 0 ? 'rgba(231, 76, 60, 0.7)' : // Kırmızı (düşüş)
+                        'rgba(149, 165, 166, 0.7)' // Gri (değişim yok)
+                    ),
+                    borderColor: changePercents.map(percent =>
+                        percent > 0 ? 'rgba(46, 204, 113, 1)' : // Yeşil (artış)
+                        percent < 0 ? 'rgba(231, 76, 60, 1)' : // Kırmızı (düşüş)
+                        'rgba(149, 165, 166, 1)' // Gri (değişim yok)
+                    ),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Ürün Fiyatları (TL)',
+                        color: '#2c3e50',
+                        font: { size: 16 }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('tr-TR') + ' ₺';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Değişim ve Hacim Grafiği
+        const ctx2 = document.getElementById('degisimHacimChart').getContext('2d');
+        const degisimHacimChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: productNames,
+                datasets: [
+                    {
+                        label: 'Günlük Değişim (%)',
+                        data: changePercents,
+                        backgroundColor: changePercents.map(percent =>
+                            percent > 0 ? 'rgba(46, 204, 113, 0.7)' :
+                            percent < 0 ? 'rgba(231, 76, 60, 0.7)' :
+                            'rgba(149, 165, 166, 0.7)'
+                        ),
+                        borderColor: changePercents.map(percent =>
+                            percent > 0 ? 'rgba(46, 204, 113, 1)' :
+                            percent < 0 ? 'rgba(231, 76, 60, 1)' :
+                            'rgba(149, 165, 166, 1)'
+                        ),
+                        borderWidth: 1,
+                        order: 1
+                    },
+                    {
+                        label: 'İşlem Hacmi',
+                        data: volumes,
+                        type: 'line',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 2,
+                        fill: false,
+                        yAxisID: 'y1',
+                        order: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Günlük Değişim ve İşlem Hacmi',
+                        color: '#2c3e50',
+                        font: { size: 16 }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Değişim (%)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    y1: {
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'İşlem Hacmi'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('tr-TR');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

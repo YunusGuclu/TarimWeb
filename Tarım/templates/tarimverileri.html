@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarım Rehberi - Toprak ve Ürün Verileri</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+     body {
+            background: url('https://mehmetsoylemez.com.tr/wp-content/uploads/2013/06/gokyuzu-1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Lora', serif;
+            color: #2c3e50;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: rgba(76, 175, 80, 0.9);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-size: 1.2rem;
+            padding: 10px 15px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .currency-bar {
+            background-color: transparent;
+            box-shadow: none;
+            margin-top: 65px;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+            z-index: 99;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .currency-bar iframe {
+            width: 100%;
+            height: 68px;
+            border: none;
+        }
+
+        .separator-image {
+            width: 100%;
+            margin: 20px auto;
+            text-align: center;
+            position: relative;
+            max-width: 800px;
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .separator-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .separator-image img.active {
+            display: block;
+        }
+
+        .separator-text {
+            font-family: 'Lora', serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .content {
+            flex: 1;
+            margin-top: 100px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ffcc00;
+        }
+
+        .weather-widget {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        .weather-widget img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .weather-widget div {
+            text-align: center;
+            margin: 0 10px;
+        }
+
+        .weather-widget p {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .weather-widget span {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card img {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .card-text {
+            color: #34495e;
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+
+        .btn {
+            background-color: #4caf50;
+            color: white;
+            margin-top: auto;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        #searchInput {
+            border-radius: 4px 0 0 4px;
+        }
+        #searchButton {
+            border-radius: 0 4px 4px 0;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="fas fa-tractor" style="font-size: 1.8rem; color: white; margin-right: 10px;"></i>
+                Tarım Uygulaması
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Anasayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tarimverileri' %}"><i class="fas fa-seedling"></i> Tarım Verileri</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tarimfiyatlari/"><i class="fas fa-chart-line"></i> Tarım Fiyatları</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/hakkinda/"><i class="fas fa-info-circle"></i> Hakkında</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}"><i class="fas fa-envelope"></i> İletişim</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container content">
+        <h2 class="text-center mb-4">Toprak ve Ürün Bilgisi</h2>
+        
+        <!-- Search Box -->
+        <div class="row mb-4">
+            <div class="col-md-6 mx-auto">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Toprak türü, ürün, bölge veya özellik ara...">
+                    <button class="btn btn-primary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i> Ara
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section mb-5">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Toprak Türü</th>
+                        <th>Ürünler</th>
+                        <th>Özellikler</th>
+                        <th>Görüldüğü Bölgeler</th>
+                    </tr>
+                </thead>
+                <tbody id="soil-data">
+                </tbody>
+            </table>
+            <div id="noResults" class="alert alert-info d-none text-center">
+                Arama sonucu bulunamadı.
+            </div>
+            <nav>
+                <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#" id="prev-page">Önceki</a></li>
+                    <li class="page-item"><a class="page-link" href="#" id="next-page">Sonraki</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section mt-5">
+            <div class="row justify-content-center">
+                <div class="col-11">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title text-center mb-4" style="font-size: 1.5rem; font-weight: bold;">Ürün ve Toprak Türü Dağılımı</h5>
+                            <div style="height: 500px;">
+                                <canvas id="productsChart"></canvas>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button id="prevChart" class="btn btn-primary me-2">Önceki Ürünler</button>
+                                <span id="pageInfo" class="mx-2" style="font-weight: bold;"></span>
+                                <button id="nextChart" class="btn btn-primary ms-2">Sonraki Ürünler</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const soilData = [
+                { id: 1, Toprak_Turu: "Kumlu", Urunler: "Havuç, Patates, Soğan, Kavun", Ozellikler: "Hafif ve iyi drenajlı toprak.", Bolgeler: "Ege, Akdeniz kıyı şeridi" },
+                { id: 2, Toprak_Turu: "Killi", Urunler: "Buğday, Mısır, Pancar, Bezelye", Ozellikler: "Su tutma kapasitesi yüksektir.", Bolgeler: "İç Anadolu, Güneydoğu Anadolu" },
+                { id: 3, Toprak_Turu: "Tınlı", Urunler: "Zeytin, Üzüm, Şeftali, Kayısı", Ozellikler: "Dengeli ve verimli toprak.", Bolgeler: "Marmara, Ege iç kesimleri" },
+                { id: 4, Toprak_Turu: "Organik", Urunler: "Marul, Çilek, Domates, Ispanak", Ozellikler: "Organik madde bakımından zengin.", Bolgeler: "Karadeniz kıyı şeridi" },
+                { id: 5, Toprak_Turu: "Turba", Urunler: "Çilek, Fındık, Ahududu", Ozellikler: "Organik madde oranı yüksektir.", Bolgeler: "Doğu Karadeniz bataklık alanları" },
+                { id: 6, Toprak_Turu: "Çakıllı", Urunler: "Lavanta, Kekik, Nane", Ozellikler: "Drenajı iyi fakat besin maddesi az.", Bolgeler: "Akdeniz dağlık bölgeleri" },
+                { id: 7, Toprak_Turu: "Alüvyonlu", Urunler: "Pamuk, Sebzeler, Mısır", Ozellikler: "Verimli ve besin maddesi açısından zengindir.", Bolgeler: "Çukurova, Gediz, Büyük Menderes Ovaları" },
+                { id: 8, Toprak_Turu: "Kireçli", Urunler: "Arpa, Buğday, Nohut", Ozellikler: "PH seviyesi yüksektir.", Bolgeler: "İç Anadolu, Güneydoğu Anadolu" },
+                { id: 9, Toprak_Turu: "Siltli", Urunler: "Mısır, Ayçiçeği, Sebzeler", Ozellikler: "İnce taneli ve verimli toprak.", Bolgeler: "Trakya, Marmara nehir vadileri" },
+                { id: 10, Toprak_Turu: "Podzolik", Urunler: "Patates, Çay, Orman Bitkileri", Ozellikler: "Asidik toprak yapısı.", Bolgeler: "Doğu Karadeniz yüksek kesimleri" },
+                { id: 11, Toprak_Turu: "Laterit", Urunler: "Kahve, Pirinç, Muz", Ozellikler: "Tropikal bölgelerde bulunur.", Bolgeler: "Akdeniz'in bazı mikroklima alanları" },
+                { id: 12, Toprak_Turu: "Kahverengi Orman", Urunler: "Buğday, Çavdar, Mısır", Ozellikler: "Organik madde açısından zengindir.", Bolgeler: "Kuzey Anadolu dağ etekleri" },
+                { id: 13, Toprak_Turu: "Kırmızı", Urunler: "Pamuk, Yerfıstığı, Şeker Kamışı", Ozellikler: "Demir oksit oranı yüksektir.", Bolgeler: "Akdeniz bölgesi terra-rossa alanları" },
+                { id: 14, Toprak_Turu: "Tuzlu", Urunler: "Pirinç, Halofit Bitkiler", Ozellikler: "Tuz oranı yüksektir.", Bolgeler: "Tuz Gölü çevresi, İç Anadolu tuzlu göl çevreleri" },
+                { id: 15, Toprak_Turu: "Volkanik", Urunler: "Kahve, Sebzeler, Meyveler", Ozellikler: "Mineral açısından zengin ve verimlidir.", Bolgeler: "Kapadokya, Doğu Anadolu volkanik alanları" },
+                { id: 16, Toprak_Turu: "Taşlı", Urunler: "Lavanta, Adaçayı, Kekik", Ozellikler: "Drenajı çok iyidir.", Bolgeler: "Ege ve Akdeniz dağlık bölgeleri" },
+                { id: 17, Toprak_Turu: "Çorak", Urunler: "Kuraklığa Dayanıklı Bitkiler", Ozellikler: "Besin maddesi az ve verimsiz.", Bolgeler: "İç Anadolu step alanları" },
+                { id: 18, Toprak_Turu: "Çamurlu", Urunler: "Pirinç, Su Bitkileri", Ozellikler: "Drenajı zayıf toprak.", Bolgeler: "Kızılırmak, Yeşilırmak deltaları" },
+                { id: 19, Toprak_Turu: "Karstik", Urunler: "Zeytin, Üzüm, İncir", Ozellikler: "Kireç taşlarının bulunduğu bölgelerde görülür.", Bolgeler: "Akdeniz ve Ege'nin kireçtaşı alanları" },
+                { id: 20, Toprak_Turu: "Humuslu", Urunler: "Her Tür Tarım Ürünü", Ozellikler: "Çok verimli ve zengin organik madde içerir.", Bolgeler: "Karadeniz orman altı toprakları" }
+            ];
+
+            const rowsPerPage = 10;
+            let currentPage = 1;
+            let filteredData = [...soilData];
+
+            function highlightText(text, searchTerm) {
+                if (!searchTerm) return text;
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                return text.replace(regex, '<span class="highlight">$1</span>');
+            }
+
+            function renderTable(page, data = filteredData) {
+                const startIndex = (page - 1) * rowsPerPage;
+                const endIndex = startIndex + rowsPerPage;
+                const currentData = data.slice(startIndex, endIndex);
+                const searchTerm = document.getElementById('searchInput').value.trim();
+
+                const tableBody = document.getElementById('soil-data');
+                const noResults = document.getElementById('noResults');
+                tableBody.innerHTML = '';
+
+                if (currentData.length === 0) {
+                    noResults.classList.remove('d-none');
+                    document.querySelector('nav').classList.add('d-none');
+                } else {
+                    noResults.classList.add('d-none');
+                    document.querySelector('nav').classList.remove('d-none');
+
+                    currentData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.id}</td>
+                            <td>${highlightText(item.Toprak_Turu, searchTerm)}</td>
+                            <td>${highlightText(item.Urunler, searchTerm)}</td>
+                            <td>${highlightText(item.Ozellikler, searchTerm)}</td>
+                            <td>${highlightText(item.Bolgeler, searchTerm)}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+
+                // Update pagination buttons
+                document.getElementById('prev-page').parentElement.classList.toggle('disabled', page === 1);
+                document.getElementById('next-page').parentElement.classList.toggle('disabled', endIndex >= data.length);
+            }
+
+            function searchTable() {
+                const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+                
+                if (searchTerm === '') {
+                    filteredData = [...soilData];
+                } else {
+                    filteredData = soilData.filter(item => {
+                        return (
+                            item.Toprak_Turu.toLowerCase().includes(searchTerm) ||
+                            item.Urunler.toLowerCase().includes(searchTerm) ||
+                            item.Ozellikler.toLowerCase().includes(searchTerm) ||
+                            item.Bolgeler.toLowerCase().includes(searchTerm)
+                        );
+                    });
+                }
+                
+                currentPage = 1;
+                renderTable(currentPage, filteredData);
+            }
+
+            // Event Listeners
+            document.getElementById('searchInput').addEventListener('input', searchTable);
+            document.getElementById('searchButton').addEventListener('click', searchTable);
+
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchTable();
+                }
+            });
+
+            document.getElementById('prev-page').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable(currentPage);
+                }
+            });
+
+            document.getElementById('next-page').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
+                    currentPage++;
+                    renderTable(currentPage);
+                }
+            });
+
+            let currentChartPage = 1;
+            let productsChart = null;
+
+            function createChart(page = 1) {
+                const productData = {};
+                soilData.forEach(item => {
+                    const products = item.Urunler.split(', ');
+                    products.forEach(product => {
+                        if (product !== "Her Tür Tarım Ürünü") {
+                            if (!productData[product]) {
+                                productData[product] = {
+                                    count: 0,
+                                    soilTypes: new Set()
+                                };
+                            }
+                            productData[product].count++;
+                            productData[product].soilTypes.add(item.Toprak_Turu);
+                        }
+                    });
+                });
+
+                const sortedProducts = Object.entries(productData)
+                    .sort((a, b) => b[1].count - a[1].count);
+
+                const productsPerPage = 10;
+                const startIdx = (page - 1) * productsPerPage;
+                const endIdx = startIdx + productsPerPage;
+                const currentPageProducts = sortedProducts.slice(startIdx, endIdx);
+
+                const maxPages = Math.ceil(sortedProducts.length / productsPerPage);
+                document.getElementById('prevChart').disabled = page === 1;
+                document.getElementById('nextChart').disabled = page === maxPages;
+
+                // Update page info
+                const pageInfo = document.getElementById('pageInfo');
+                pageInfo.textContent = `Sayfa ${page}/${maxPages}`;
+
+                if (productsChart) {
+                    productsChart.destroy();
+                }
+
+                productsChart = new Chart(document.getElementById('productsChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: currentPageProducts.map(([product]) => product),
+                        datasets: [{
+                            label: 'Uygun Toprak Türü Sayısı',
+                            data: currentPageProducts.map(([, data]) => data.count),
+                            backgroundColor: '#4CAF50',
+                            borderColor: '#388E3C',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Toprak Türü Sayısı',
+                                    font: {
+                                        size: 14,
+                                        weight: 'bold'
+                                    }
+                                },
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const product = context.label;
+                                        const soilTypes = Array.from(productData[product].soilTypes).join(', ');
+                                        return ['Uygun Toprak Türleri:', soilTypes];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Event Listeners for chart pagination
+            document.getElementById('prevChart').addEventListener('click', function() {
+                if (currentChartPage > 1) {
+                    currentChartPage--;
+                    createChart(currentChartPage);
+                }
+            });
+
+            document.getElementById('nextChart').addEventListener('click', function() {
+                const totalProducts = Object.keys(getAllProducts()).length;
+                const maxPages = Math.ceil(totalProducts / 10);
+                if (currentChartPage < maxPages) {
+                    currentChartPage++;
+                    createChart(currentChartPage);
+                }
+            });
+
+            function getAllProducts() {
+                const products = {};
+                soilData.forEach(item => {
+                    const itemProducts = item.Urunler.split(', ');
+                    itemProducts.forEach(product => {
+                        if (product !== "Her Tür Tarım Ürünü") {
+                            products[product] = true;
+                        }
+                    });
+                });
+                return products;
+            }
+
+            // Initial render for both table and chart
+            renderTable(currentPage);
+            createChart(currentChartPage);
+        });
+    </script>
+    <footer class="footer">
+        <span>Yazılım Kooparatifi &copy; 2024</span>
+        <div class="social-icons">
+            <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="mailto:example@gmail.com"><i class="fas fa-envelope"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
